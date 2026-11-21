@@ -31,10 +31,11 @@ Details: `docs/expert-roster.md` (roles + skill matrix) and `docs/agent-brains.m
 
 ## How the team works
 1. **The orchestrator (Atlas) is the only entry point.** The user talks to Atlas.
-2. **Agents hand work to each other through the orchestrator, never directly.** An expert returns a hand-off report to Atlas. Atlas passes the files and summary to the next expert.
-3. **Peer review before acceptance.** Atlas asks a *different* expert to review each deliverable (`peer-review-protocol` skill). Changes go back through Atlas.
-4. **Every agent reads its knowledge folder first**, plus this file.
-5. Hand-offs and review verdicts are logged in `docs/handoff-log.md`.
+2. **Experts run in parallel.** Atlas launches every expert whose inputs are ready at the same time (several Agent calls in one message) and only waits when one expert needs another's output. Peer reviews also run in parallel.
+3. **Agents hand work to each other through the orchestrator, never directly.** An expert returns a hand-off report to Atlas. Atlas passes the files and summary to the next expert.
+4. **Peer review before acceptance.** Atlas asks a *different* expert to review each deliverable (`peer-review-protocol` skill). Changes go back through Atlas.
+5. **Every agent reads its knowledge folder first**, plus this file.
+6. Hand-offs and review verdicts are logged in `docs/handoff-log.md`.
 
 ## Conventions
 - Plain HTML/CSS/ES modules. The worker is a classic script (uses `importScripts`).

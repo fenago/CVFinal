@@ -15,7 +15,11 @@
         <h1><span class="logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M9 12h6M9 16h6"/></svg></span>How it works</h1>
         <p class="subtitle">Three pieces of technology, explained in plain words.</p>
       </div>
-      <a class="nav-link" href="index.html">Back to Scanner</a>
+      <nav class="header-links" aria-label="About this app">
+        <a class="nav-link" href="index.html">Back to Scanner</a>
+        <a class="nav-link" href="resources.html">Resources</a>
+        <a class="nav-link" href="guide/">How it was built</a>
+      </nav>
     </header>
 
     <main class="article">
@@ -60,7 +64,7 @@
       </div>
       <h3>Updates and “Reset app data”</h3>
       <p>The database has a version number. When a new version of the app needs to change how scans are stored, it upgrades the database the first time you open it. If the app is also open in another tab with the older version, that tab is asked to step aside; if it can't, you'll see a message asking you to close the other tab.</p>
-      <p>If the app ever seems stuck, use <strong>Reset app data</strong> at the bottom of the scanner page. It deletes the saved scans on this device and starts fresh. For a deeper clean in Chrome: open DevTools (F12), go to <strong>Application → Storage</strong>, and click <strong>Clear site data</strong>.</p>
+      <p>If the app ever seems stuck, use <strong>Reset app data</strong> at the bottom of the scanner page. It deletes the saved scans on this device and starts fresh. For a deeper clean in Chrome: open DevTools (right-click → Inspect), go to <strong>Application → Storage</strong>, and under <strong>Clear site data</strong> click <strong>Clear selected</strong>. The <a href="guide/#step-hang">guide</a> shows every click.</p>
 
       <h2>Where it runs</h2>
       <p>The whole app is a handful of plain files (a page, a stylesheet, some JavaScript and the OpenCV engine) served by Netlify. Netlify only delivers the files; every bit of the actual work happens in your browser.</p>

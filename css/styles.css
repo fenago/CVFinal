@@ -89,6 +89,7 @@ h1, h2, h3 { font-family: var(--font-display); margin: 0; letter-spacing: -0.02e
 .subtitle { margin: 6px 0 0; color: var(--text-2); font-size: 17px; max-width: 46ch; }
 .nav-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; font-weight: 600; text-decoration: none; }
 .nav-link:hover { text-decoration: underline; }
+.header-links { display: flex; flex-wrap: wrap; gap: 0 18px; align-items: center; }
 
 /* ---------- Banner (blocked / updated elsewhere) ---------- */
 .banner {

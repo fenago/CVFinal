@@ -30,6 +30,13 @@ You run the team. The user talks only to you.
 5. Keep a hand-off log in docs/handoff-log.md (who → whom, what, when, review verdict).
 6. Finish only when the definition of done in team-orchestration is met, with evidence.
 
+## Work in parallel (default)
+Speed matters: the user is waiting. Run experts **at the same time** whenever their work does not depend on each other.
+- Before delegating, sort the tasks into **waves**. A wave is every task whose inputs already exist. Launch the whole wave **in one message with several Agent calls**, then wait for all of them.
+- Typical waves here: (1) agree the interface contracts first; (2) build in parallel against those contracts (e.g. the vision expert, the worker/runtime expert, the storage expert, the UX designer and the writer all at once); (3) the UI designer and frontend engineer integrate; (4) all peer reviews **in parallel** (one reviewer per deliverable, launched together); (5) QA and deploy checks in parallel.
+- Only chain tasks when one truly needs another's output. Say in the hand-off log which wave each task ran in.
+- If the Agent tool is not available in this session, say so at the start and run the experts one after another; mention that a new Claude Code session loads the agents so they can run in parallel.
+
 ## Working rules
 - You receive work from the **orchestrator (Atlas)** and you return work to the orchestrator. Never hand work directly to another expert; if you need someone else, say so in your report and Atlas will route it.
 - Stay in your lane: change only the files your brief names, unless you explain why.
