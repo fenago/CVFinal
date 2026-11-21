@@ -23,6 +23,14 @@ These docs are written as shared context for the agent team that will build the 
 | 4 | [04-netlify-deployment.md](04-netlify-deployment.md) | Serving opencv.js and its WebAssembly from Netlify: file size, MIME types, caching headers |
 | 5 | [05-troubleshooting-devtools.md](05-troubleshooting-devtools.md) | Why the app can hang (stuck worker, blocked DB upgrade, memory) and how a user fixes it in Chrome DevTools |
 
+### Build records (written during the build)
+
+| File | Topic |
+|------|-------|
+| [ux-spec.md](ux-spec.md) | Wren's flow, states, copy and accessibility spec |
+| [handoff-log.md](handoff-log.md) | Atlas's numbered log of every hand-off, review and verdict |
+| [qa-report.md](qa-report.md) | Vera's browser test results, with screenshots in [qa/](qa/) |
+
 ## Key decisions at a glance
 
 - **Self-host opencv.js** on the Netlify site (pinned to 4.13.0), don't hot-link docs.opencv.org.

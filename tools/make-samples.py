@@ -217,7 +217,7 @@ def main():
     truth["receipt.jpg"] = {"width": W, "height": H, "corners": c1, "note": "TL,TR,BR,BL"}
     # 2) A4 letter on blue fabric, landscape 2304x1728
     W, H = 2304, 1728
-    c2 = [(640, 190), (1640, 260), (1770, 1560), (520, 1490)]
+    c2 = [(760, 160), (1590, 205), (1690, 1525), (690, 1480)]
     p2 = photograph(make_letter(), fabric(H, W, 5), c2, 33, (-0.5, 0.6), (300, 150, 520, 360, 0.30))
     p2.save(os.path.join(OUT, "letter.jpg"), "JPEG", quality=88, optimize=True)
     truth["letter.jpg"] = {"width": W, "height": H, "corners": c2, "note": "TL,TR,BR,BL"}

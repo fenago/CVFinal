@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>DB harness (Ledger)</title></head>
+<body>
+<!-- Test-only page used by tests/db-check.cjs: exposes js/db.js on window.__db. -->
+<pre id="log">loaded</pre>
+<script type="module">
+  import * as db from '../js/db.js';
+  window.__db = db;
+  window.__events = [];
+  db.onDbEvent((t) => window.__events.push(t));
+  document.getElementById('log').textContent = 'ready';
+</script>
+</body>
+</html>

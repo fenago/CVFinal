@@ -1,0 +1,64 @@
+# Netlify configuration for the Smart Document Scanner (owner: Harbor, netlify-deploy-engineer)
+# Static site: no build step. Netlify serves the repository root as-is.
+
+[build]
+  publish = "."
+  command = ""
+
+# ---------------------------------------------------------------- security (every response)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # The webcam is optional and only for this site; nothing else is needed.
+    Permissions-Policy = "camera=(self), microphone=(), geolocation=(), payment=(), usb=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+    # 'wasm-unsafe-eval' lets opencv.js compile its embedded WebAssembly; 'unsafe-eval' is needed because
+    # Emscripten's embind generates small JS glue functions at runtime. Everything else is same-origin only.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval'; worker-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; style-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
+
+# ---------------------------------------------------------------- caching
+# opencv.js lives under a versioned folder (vendor/opencv/4.12.0/), so it can be cached "forever".
+# A new OpenCV version gets a new folder name, which busts the cache.
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML must always be revalidated so a new deploy shows up on the next visit.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# App code is not versioned by file name, so revalidate it too (cheap 304s).
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/scanner.worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/samples/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# If a split OpenCV build (opencv_js.wasm) is ever used, browsers need this exact MIME type
+# for WebAssembly.instantiateStreaming. Do not upload pre-compressed .wasm.gz/.br files.
+[[headers]]
+  for = "/*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"

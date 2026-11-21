@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Worker harness (Forge)</title></head>
+<body>
+<!-- Test-only page used by tests/worker-check.cjs: no UI, just the scanner client. -->
+<pre id="log">loading…</pre>
+<script type="module">
+  import { createScanner } from '../js/scanner-client.js';
+  // The worker URL is relative to this page, so point it at the root worker.
+  const scanner = createScanner({ url: '../scanner.worker.js' });
+  window.__scanner = scanner;
+  window.__scanUrl = async (u, options) => {
+    const blob = await (await fetch(u)).blob();
+    const bmp = await createImageBitmap(blob, { imageOrientation: 'from-image' });
+    const r = await scanner.scan(bmp, options || {});
+    return { method: r.method, corners: r.corners, width: r.width, height: r.height, ms: r.ms,
+             heapBytes: r.heapBytes, probe: r.probe, sizes: [r.original.size, r.result.size, r.thumb.size],
+             types: [r.original.type, r.result.type, r.thumb.type] };
+  };
+  scanner.ready.then((v) => { document.getElementById('log').textContent = 'ready ' + v.version; },
+                     (e) => { document.getElementById('log').textContent = 'failed ' + e.message; });
+</script>
+</body>
+</html>

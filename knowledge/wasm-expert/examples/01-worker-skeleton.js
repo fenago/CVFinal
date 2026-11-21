@@ -1,10 +1,13 @@
 // scanner.worker.js skeleton: classic worker, load once, always reply, free Mats.
 self.importScripts('vendor/opencv/4.12.0/opencv.js');
+// FIXED by Quill (meta-agent) after Forge's first run hung: resolving a Promise with the thenable
+// Module (`r(m)`) makes the Promise call m.then() again forever. Strip `then` BEFORE resolving.
+const unthen = (m) => { if (m && typeof m.then === 'function') { delete m.then; if (m.then) m.then = undefined; } return m; };
 const cvReady = (async () => {
   let c = self.cv;
-  if (c && typeof c.then === 'function' && !c.Mat) c = await new Promise((r) => c.then((m) => r(m)));
+  if (c && typeof c.then === 'function' && !c.Mat) c = await new Promise((r) => c.then((m) => r({ m: unthen(m) }))).then((b) => b.m);
   if (!c.Mat) await new Promise((r) => (c.onRuntimeInitialized = r));
-  if (typeof c.then === 'function') delete c.then;   // avoid thenable re-resolution loops
+  unthen(c);                                          // also before the async function returns it
   self.cv = c; self.postMessage({ type: 'ready' }); return c;
 })().catch((e) => self.postMessage({ type: 'fatal', message: String(e) }));
 

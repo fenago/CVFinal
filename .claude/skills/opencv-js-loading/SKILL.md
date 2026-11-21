@@ -16,14 +16,19 @@ Newer builds expose a Promise: `cv = (cv instanceof Promise) ? await cv : cv;`
 
 **Robust readiness check (handles every build style):**
 ```js
+// The 4.12.0 build returns a "thenable" Module whose then() hands back the Module itself.
+// `await module` or `resolve(module)` would call then() again forever (verified: the worker never got ready).
+// So strip `then` BEFORE resolving with the Module, and box it through the Promise chain.
+const unthen = (m) => { if (m && typeof m.then === 'function') { delete m.then; if (m.then) m.then = undefined; } return m; };
 async function cvReady() {
   let c = self.cv;
-  if (c instanceof Promise || typeof c?.then === 'function') c = await c;
-  if (!c.Mat) await new Promise(r => { c.onRuntimeInitialized = r; });
-  self.cv = c; return c;
+  if (c instanceof Promise) c = await c.then((m) => ({ m: unthen(m) })).then((b) => b.m);
+  else if (typeof c?.then === 'function') c = await new Promise((r) => c.then((m) => r({ m: unthen(m) }))).then((b) => b.m);
+  if (!c.Mat) await new Promise((r) => { c.onRuntimeInitialized = r; });
+  self.cv = unthen(c); return c;   // returning a thenable from an async function has the same trap
 }
 ```
-Note: some builds return a "thenable" Module whose `then` resolves to itself. Delete `then` after awaiting (or wrap it) so `await` does not loop.
+Working reference: `scanner.worker.js` in the repo root.
 
 **Checklist**
 - [ ] Loaded exactly once (in the worker), never on every scan.

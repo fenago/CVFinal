@@ -13,7 +13,7 @@ This is the big picture that ties the other five docs together. It is our propos
                 │ postMessage({type:'scan', id, bitmap, settings}, [bitmap])│ postMessage({id, ok, blobs, corners, ms})
 ┌───────────────▼──────────────────────────────────────────────────────────┴─────────────────┐
 │  scanner.worker.js (classic worker)                                                          │
-│  importScripts('/vendor/opencv/4.13.0/opencv.js') → wait for runtime → post {type:'ready'}  │
+│  importScripts('/vendor/opencv/4.12.0/opencv.js') → wait for runtime → post {type:'ready'}  │
 │  detectPage() → warpPage() → cleanPage() → encode PNG/JPEG via OffscreenCanvas.convertToBlob │
 │  Every cv.Mat freed in try/finally                                                            │
 └──────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -27,7 +27,7 @@ This is the big picture that ties the other five docs together. It is our propos
 /db.js                  IndexedDB wrapper
 /scanner-client.js      worker manager (timeouts, restart)
 /scanner.worker.js      all OpenCV code
-/vendor/opencv/4.13.0/opencv.js   (+ opencv_js.wasm if you use a split build)
+/vendor/opencv/4.12.0/opencv.js   (+ opencv_js.wasm if you use a split build)
 /_headers               Netlify headers (MIME + caching)
 /netlify.toml           optional; publish dir, headers can live here instead
 /docs/                  these research notes

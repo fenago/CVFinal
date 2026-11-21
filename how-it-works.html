@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>How it works — Scanner</title>
+  <meta name="description" content="How the Scanner works: OpenCV.js, WebAssembly and IndexedDB explained in plain words.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230060df'/%3E%3Cpath d='M10 7h9l5 5v13H10z' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="app-header">
+      <div>
+        <h1><span class="logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M9 12h6M9 16h6"/></svg></span>How it works</h1>
+        <p class="subtitle">Three pieces of technology, explained in plain words.</p>
+      </div>
+      <a class="nav-link" href="index.html">Back to Scanner</a>
+    </header>
+
+    <main class="article">
+      <p class="lead">You take a photo of a page. A moment later you have a flat, clean, black-and-white scan, saved in a library on your device. Nothing is uploaded anywhere. Here is what happens in between.</p>
+
+      <div class="diagram" role="list" aria-label="The journey of one photo">
+        <div role="listitem"><strong>1. Your photo</strong>Chosen from your files or taken with the camera.</div>
+        <div role="listitem"><strong>2. OpenCV.js</strong>Finds the page, flattens it and cleans it up.</div>
+        <div role="listitem"><strong>3. WebAssembly</strong>Makes that work fast, in a background helper.</div>
+        <div role="listitem"><strong>4. IndexedDB</strong>Keeps the photo and the scan in your library.</div>
+      </div>
+
+      <h2>OpenCV.js: the eyes</h2>
+      <p><strong>OpenCV</strong> is a free toolbox for “computer vision”: teaching computers to make sense of pictures. It has been used for more than twenty years in robots, cars and phone cameras. <strong>OpenCV.js</strong> is the same toolbox, packaged so it can run inside a web browser.</p>
+      <p>Think of it as a very patient assistant with a ruler and a pair of scissors. For each photo it does this:</p>
+      <ol class="steps">
+        <li><strong>Find the page.</strong> It turns the photo gray, smooths out the texture of the table, and looks for strong edges, the lines where something bright meets something dark. Then it looks for the biggest shape with four corners. That is almost always the page.</li>
+        <li><strong>Flatten it.</strong> A photo taken at an angle makes a rectangle look like a slanted, uneven shape. Knowing the four corners, OpenCV stretches the picture back into a straight rectangle, the way you would smooth a crumpled sheet onto a desk. This step is called a <em>perspective warp</em>.</li>
+        <li><strong>Clean it up.</strong> Shadows and uneven light make some parts of the page darker than others. First OpenCV estimates how bright the bare paper is in each area and evens that out. Then, instead of using one rule for the whole page, OpenCV decides “is this ink or paper?” for each small neighbourhood separately. This is called <em>adaptive thresholding</em>. The result is crisp black text on white paper, even where a shadow fell.</li>
+      </ol>
+      <p>If it can't find four clear corners (for example, a white page on a white table), it uses the whole photo and tells you. A darker, plain background fixes that.</p>
+
+      <h2>WebAssembly: the fast engine</h2>
+      <p>OpenCV was written in C++, a programming language built for speed. Browsers normally run JavaScript, which is flexible but slower for heavy number-crunching like this.</p>
+      <p><strong>WebAssembly</strong> (often shortened to Wasm) is a compact format that lets the browser run code like OpenCV's at nearly the speed of a normal desktop program. Think of it as shipping a pre-built engine instead of the blueprints: your browser downloads it once, keeps it, and runs it right on your device.</p>
+      <p>That engine is big (about 11 MB, or roughly 3.5 MB to download because it is compressed on the way). So the first visit shows “Loading the scanner…” for a moment. After that, your browser keeps a copy.</p>
+      <h3>Why the page never freezes</h3>
+      <p>Cleaning up a photo is heavy work. If the page did it directly, buttons would stop responding until it was done. So the scanner runs in a <strong>Web Worker</strong>: a helper that works in the background, like a kitchen that cooks while the waiter keeps talking to you. The page sends the photo to the helper, the helper sends back the finished scan, and you can scroll and tap the whole time. The progress bar shows each step as the helper finishes it.</p>
+      <h3>Tidying up after itself</h3>
+      <p>WebAssembly gives OpenCV its own block of memory. The browser's usual automatic clean-up can't see inside that block, so the scanner deletes every temporary picture it makes as soon as it is done with it. Our tests scan the same photos over and over and check that this memory doesn't grow.</p>
+
+      <h2>IndexedDB: the filing cabinet</h2>
+      <p><strong>IndexedDB</strong> is a small database built into every modern browser. Websites can use it to save real files, such as photos, on your device. Each website gets its own private drawer that other websites can't open.</p>
+      <p>Every scan is saved there as two images (the original photo and the clean scan) plus a small preview, its name and the date. That's why your library is still there after you close the tab or restart the computer.</p>
+      <div class="card">
+        <h3>What this means for you</h3>
+        <ul>
+          <li><strong>Private:</strong> your photos never leave your device. There is no server and no account.</li>
+          <li><strong>Per browser:</strong> scans saved in one browser (or on one device) don't appear in another.</li>
+          <li><strong>Yours to clear:</strong> clearing your browser's site data, or using <em>Reset app data</em>, deletes the library.</li>
+        </ul>
+      </div>
+      <h3>Updates and “Reset app data”</h3>
+      <p>The database has a version number. When a new version of the app needs to change how scans are stored, it upgrades the database the first time you open it. If the app is also open in another tab with the older version, that tab is asked to step aside; if it can't, you'll see a message asking you to close the other tab.</p>
+      <p>If the app ever seems stuck, use <strong>Reset app data</strong> at the bottom of the scanner page. It deletes the saved scans on this device and starts fresh. For a deeper clean in Chrome: open DevTools (F12), go to <strong>Application → Storage</strong>, and click <strong>Clear site data</strong>.</p>
+
+      <h2>Where it runs</h2>
+      <p>The whole app is a handful of plain files (a page, a stylesheet, some JavaScript and the OpenCV engine) served by Netlify. Netlify only delivers the files; every bit of the actual work happens in your browser.</p>
+    </main>
+  </div>
+
+  <div class="back-bar">
+    <nav class="toolbar glass" aria-label="Page navigation">
+      <a class="btn btn-primary" href="index.html">Open the Scanner</a>
+    </nav>
+  </div>
+</body>
+</html>
